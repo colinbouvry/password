@@ -1,0 +1,132 @@
+📦 SHAMIR SECRET SHARING 2-SUR-3 - SYSTÈME FINALISÉ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 FICHIERS ACTIFS (RECOMMANDÉS)
+
+1. 📋 generate_24_passphrase.py
+   ├─ Crée une passphrase 24 mots aléatoire
+   ├─ Entropie réelle (nanosecondes système)
+   └─ Usage: python generate_24_passphrase.py
+
+2. 🔐 shamir_polynomial_2sur3.py ⭐ PRINCIPAL
+   ├─ Divise la passphrase en 3 parts Shamir
+   ├─ Avec 2 parts sur 3, retrouvez le secret
+   ├─ Utilise interpolation de Lagrange
+   └─ Usage: python shamir_polynomial_2sur3.py
+
+3. 🔓 recovery_polynomial.py ⭐ PRINCIPAL
+   ├─ Retrouve le secret avec 2 parts
+   ├─ Demande les 2 parts + leurs numéros
+   ├─ Retourne le hash SHA256
+   └─ Usage: python recovery_polynomial.py
+
+4. 🧪 test_shamir_polynomial_complet.py ⭐ INTÉGRATION
+   ├─ Teste le FLUX COMPLET (Génération → Division → Récupération)
+   ├─ Utilise generate_24_passphrase.py (vraie entropie)
+   ├─ Divise avec shamir_polynomial_2sur3.py (Lagrange)
+   ├─ Récupère avec recovery_polynomial.py (2 parts suffisent)
+   ├─ Tests : Part 1 + Part 2 → ✅
+   ├─        Part 1 + Part 3 → ✅
+   ├─        Part 2 + Part 3 → ✅
+   └─ Usage: python test_shamir_polynomial_complet.py
+
+5. 🎬 demo_complete.py
+   ├─ Démonstration complète du système
+   ├─ Explications mathématiques
+   ├─ Cas d'usage concrets
+   └─ Usage: python demo_complete.py
+
+6. 📖 README.md
+   └─ Documentation complète (lire en premier !)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 FLUX D'UTILISATION RECOMMANDÉ
+
+  1. Lire README.md
+  2. Exécuter: python generate_24_passphrase.py
+     → Copier les 24 mots
+  3. Exécuter: python shamir_polynomial_2sur3.py
+     → Fournir les 24 mots
+     → Noter Part 1, Part 2, Part 3
+  4. Ranger les parts dans 3 endroits différents
+  5. Tester avec: python recovery_polynomial.py
+     → Fournir 2 parts (n'importe lesquelles)
+     → Vérifier que le hash correspond
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ CARACTÉRISTIQUES
+
+✅ 100% LOCAL - Pas de connexion Internet
+✅ ENTROPIE RÉELLE - Basée sur nanosecondes système
+✅ SHAMIR STANDARD - Cryptographie polynomiale éprouvée
+✅ 256 BITS - Sécurité SHA256 complète
+✅ 2-SUR-3 FLEXIBLE - N'importe quelles 2 parts retrouvent le secret
+✅ INTERCHANGEABLE - Pas besoin de la 3e part
+✅ ZÉRO DÉPENDANCE - Utilise uniquement la stdlib Python
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 COMPARAISON AVEC AUTRES SYSTÈMES
+
+XOR Simple (SUPPRIMÉ)    | Shamir Polynomial (ACTIF)
+─────────────────────────────────────────────────────
+3/3 parts requises       | 2/3 parts suffisent ✅
+Parts interdépendantes   | Parts interchangeables ✅
+Moins flexible           | Très flexible ✅
+Cryptographie basique    | Cryptographie standard ✅
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔬 MATHÉMATIQUES (EXPLIQUÉES SIMPLEMENT)
+
+Le secret est protégé par une DROITE (polynôme degré 1) :
+
+    f(x) = secret + a·x
+
+Les 3 parts sont 3 POINTS sur cette droite :
+
+    Part 1 = f(1) = secret + a
+    Part 2 = f(2) = secret + 2a
+    Part 3 = f(3) = secret + 3a
+
+Avec 2 POINTS, on retrouve la DROITE ENTIÈRE.
+Donc on retrouve f(0) = SECRET ✅
+
+C'est l'INTERPOLATION DE LAGRANGE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ SÉCURITÉ - IMPORTANT
+
+✅ Avec 1 part seule    : IMPOSSIBLE de retrouver (sécurité 100%)
+✅ Avec 2 parts         : Retrouve le secret (système fonctionnel)
+✅ Avec 3 parts         : Retrouve le secret (redondance)
+
+⚠️ Copier les 24 mots ET les 3 parts sur papier physique
+⚠️ Ranger dans 3 endroits DIFFÉRENTS (maison, banque, notaire)
+⚠️ Tester la récupération AVANT de supprimer l'original
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 COMMANDES RAPIDES
+
+# Générer
+python generate_24_passphrase.py
+
+# Diviser
+python shamir_polynomial_2sur3.py
+
+# Récupérer
+python recovery_polynomial.py
+
+# Tester
+python test_shamir_polynomial_complet.py
+python demo_complete.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Créé : 2025-11-18
+Version : 2.0 (Shamir Polynomial 2-sur-3)
+Statut : ✅ Complet et testé

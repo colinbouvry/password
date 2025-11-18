@@ -1,0 +1,2 @@
+python recover_secret.py
+pause
