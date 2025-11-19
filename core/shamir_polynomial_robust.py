@@ -7,7 +7,13 @@ import random
 import time
 import hashlib
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
+
+# Force UTF-8 encoding (safe pour EXE PyInstaller)
+if sys.stdout is not None:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except (AttributeError, RuntimeError):
+        pass
 
 PRIME = 2**256 - 2**32 - 977
 

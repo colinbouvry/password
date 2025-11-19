@@ -1,0 +1,255 @@
+═════════════════════════════════════════════════════════════════════════════════
+SI TU LIS CECI:
+
+Je suis décédé ou cas d'urgence.
+Voici comment accéder à mon Bitwarden et tous mes passwords.
+
+═════════════════════════════════════════════════════════════════════════════════
+
+SITUATION:
+──────────────────────────────────────────────────────────────────────────────────
+J'ai un compte Bitwarden avec 50,000+ passwords chiffrés.
+Pour y accéder, il faut les "24 mots magiques" (Master Password).
+
+CES 24 MOTS SONT STOCKÉS EN TROIS ENDROITS SÛRS:
+  1. Papier plastifié (Coffre A et B)
+  2. Gravure acier permanent (Coffre B)
+  3. Fichier shamir_metadata.json (Clé USB, Coffre A)
+
+
+ACCÈS AU BITWARDEN - MÉTHODE SIMPLE (99% des cas)
+──────────────────────────────────────────────────────────────────────────────────
+
+ÉTAPE 1: Aller au Coffre A (maison)
+         Clé: [Ouvrir le coffre]
+
+ÉTAPE 2: Chercher "MASTER PASSWORD BITWARDEN - Papier plastifié"
+         C'est un petit papier avec 24 mots
+
+ÉTAPE 3: Accéder à Bitwarden.com (depuis n'importe quel ordinateur)
+
+ÉTAPE 4: Cliquer "Forgot password?"
+
+ÉTAPE 5: Entrer les 24 mots (séparés par des espaces):
+         maison bas lune pates film jaune foudre clavier haut lait...
+         [Voir le papier]
+
+ÉTAPE 6: Bitwarden se déverrouille ✅
+         Tous les passwords sont maintenant accessibles!
+
+DURÉE: 5 minutes
+
+
+ACCÈS AU BITWARDEN - MÉTHODE EMERGENCY (1% des cas)
+──────────────────────────────────────────────────────────────────────────────────
+
+Situation: Le papier en Coffre A est perdu ou dégradé
+
+SOLUTION: Utiliser les PARTS Shamir (backup cryptographique)
+
+ÉTAPE 1: Récupérer PART 2 (Coffre B, enveloppe scellée)
+         "PART 2 - SHAMIR SECRET"
+
+ÉTAPE 2: Récupérer PART 3 (Coffre C, enveloppe scellée)
+         "PART 3 - SHAMIR SECRET"
+         [Contact: Personne notée]
+
+ÉTAPE 3: Récupérer la clé USB (Coffre B)
+         Fichiers nécessaires:
+         ├─ Shamir_Recover_Standalone.exe
+         └─ shamir_metadata.json (optionnel)
+
+ÉTAPE 4: Double-clic sur Shamir_Recover_Standalone.exe
+         Ou: python recover_secret_standalone.py
+
+ÉTAPE 5: Programme demande:
+         "Numéro Part 1 (1-3): " → Entrez "2"
+         "Hex Part 2 (64 chars): " → Copiez-collez la valeur hex de PART 2
+         "Numéro Part 2 (1-3): " → Entrez "3"
+         "Hex Part 3 (64 chars): " → Copiez-collez la valeur hex de PART 3
+
+ÉTAPE 6: Les 24 mots s'affichent!
+
+ÉTAPE 7: Même processus que méthode simple:
+         Bitwarden.com → "Forgot password?" → Entrez les 24 mots
+
+DURÉE: 30 minutes
+
+
+ACCÈS ULTIME - SI TOUT EST PERDU (0.1% chance)
+──────────────────────────────────────────────────────────────────────────────────
+
+Situation: Tous les papiers ET les 3 PARTS sont perdus
+           Mais tu as la clé USB
+
+SOLUTION: Les 24 mots y sont EN CLAIR
+
+ÉTAPE 1: Récupérer la clé USB (Coffre A)
+
+ÉTAPE 2: Ouvrir "shamir_metadata.json" avec Notepad (Win) ou TextEdit (Mac)
+
+ÉTAPE 3: Chercher la ligne: "passphrase": "maison bas lune..."
+
+ÉTAPE 4: Les 24 mots y sont directement!
+
+ÉTAPE 5: Copier les 24 mots → Bitwarden → "Forgot password?"
+
+DURÉE: 5 minutes
+
+
+WHERE TO FIND EVERYTHING
+──────────────────────────────────────────────────────────────────────────────────
+
+COFFRE A (Maison):
+  ├─ 📄 "MASTER PASSWORD BITWARDEN" (Papier plastifié)
+  │  └─ Les 24 mots lisibles
+  │
+  ├─ 💾 Clé USB
+  │  ├─ shamir_metadata.json (les 24 mots en JSON)
+  │  ├─ Shamir_Recover_Standalone.exe
+  │  ├─ recover_secret_standalone.py
+  │  └─ GUIDE_COMPLET_20ANS.md (guide complet)
+  │
+  ├─ ✉️ Enveloppe scellée "PART 1"
+  │  └─ Shamir part (64 caractères hexa)
+  │
+  └─ 📋 Ce fichier (INSTRUCTIONS_HERITIERS.txt)
+
+
+COFFRE B (Banque):
+  ├─ 📄 "MASTER PASSWORD BITWARDEN" (Papier plastifié) [REDONDANCE]
+  │
+  ├─ 🔐 Gravure acier (permanent, 500+ ans)
+  │  └─ Les 24 mots gravés en acier inox
+  │
+  ├─ 💾 Clé USB (backup)
+  │  └─ Même contenu que Coffre A
+  │
+  ├─ 📀 DVD-R (archive durable)
+  │  └─ Backup complet du code + données
+  │
+  └─ ✉️ Enveloppe scellée "PART 2"
+     └─ Shamir part (64 caractères hexa)
+
+
+COFFRE C (Parent/Ami):
+  └─ ✉️ Enveloppe scellée "PART 3"
+     └─ Shamir part (64 caractères hexa)
+     └─ Note: "Si je te demande, envoie-moi cette enveloppe"
+
+
+CONTACTS UTILES
+──────────────────────────────────────────────────────────────────────────────────
+
+Pour ouvrir les coffres:
+  - Coffre A: [Clé stockée à] ou [Contact notaire]
+  - Coffre B: [Banque] - Accès testamentaire
+  - Coffre C: [Nom contact]
+
+Pour aide technique:
+  - Ami IT: [Nom/Contact]
+  - Notaire: [Nom/Contact]
+  - [Autre contact de confiance]
+
+
+IMPORTANT SECURITY NOTES
+──────────────────────────────────────────────────────────────────────────────────
+
+🔴 CRITICAL:
+  Ces 24 mots donnent accès à TOUS les passwords Bitwarden.
+  Traite-les avec la même sécurité que un coffre-fort.
+  Détruis-les une fois utilisés (si approprié).
+
+🟡 WARNING:
+  Si tu as accès au compte Bitwarden, tu peux changer le Master Password.
+  Recommandé: Changer le Master Password après récupération.
+
+🟢 SAFE:
+  Les papiers et enveloppes sont physiquement scellés.
+  Les seules menaces sont: incendie, vol, dégradation.
+  C'est pourquoi il y a redondance (3 coffres, 3 formats).
+
+
+WHAT NEXT (Après accès réussi)
+──────────────────────────────────────────────────────────────────────────────────
+
+OPTION A: Changer le Master Password
+  1. Accédez à Bitwarden → Account Settings
+  2. Security → Change Master Password
+  3. Entrez nouveau password (fort)
+  4. Sauvegardez ce nouveau password
+  5. Ancien password + PARTS deviennent inutiles
+  6. Peuvent être détruits
+
+OPTION B: Garder le même Master Password
+  1. Tous les passwords restent accessibles
+  2. Ancien système reste valide
+  3. Peut continuer à utiliser le papier/PARTS comme backup
+
+RECOMMANDATION: Option A (plus sûr)
+  Les 24 mots originaux ont été exposés (tu devais les lire).
+  Créer un nouveau Master Password très fort.
+
+
+VERIFICATION CHECKLIST
+──────────────────────────────────────────────────────────────────────────────────
+
+□ Papiers plastifiés sont lisibles et non jaunis?
+□ Gravure acier est visible et lisible?
+□ Clés USB fonctionnent (essaie de lire les fichiers)?
+□ Les 24 mots du papier correspondent à ceux du JSON?
+□ Enveloppes PARTS sont scellées intactes?
+□ Tu as accès à tous les 3 coffres?
+
+
+TROUBLESHOOTING
+──────────────────────────────────────────────────────────────────────────────────
+
+❌ "Papier est trop jauni, illisible"
+   → Va au Coffre B, utilise la gravure acier (lisible)
+   → Ou utilise PART 2 + PART 3 pour recovery
+
+❌ "Les 24 mots ne donnent pas accès à Bitwarden"
+   → Vérifiez l'orthographe exacte (case sensitive!)
+   → Essayez PART 2 + PART 3 recovery
+   → Ouvrez shamir_metadata.json avec Notepad (comparez)
+
+❌ "Clé USB ne fonctionne plus"
+   → Essayez un autre ordinateur
+   → Essayez un autre port USB
+   → Utilisez le DVD-R (Coffre B)
+
+❌ "Exe ne se lance pas"
+   → Essayez avec Python: python recover_secret_standalone.py
+   → Ou ouvrez shamir_metadata.json directement avec Notepad
+
+❌ "J'ai oublié où sont les coffres"
+   → Vérifiez le testament
+   → Contactez la banque (Coffre B est notaire)
+   → Contactez le parent (Coffre C, PART 3)
+
+
+LAST WORDS
+──────────────────────────────────────────────────────────────────────────────────
+
+Si tu as pu lire ceci, c'est que tu as besoin d'accéder à mes données.
+
+Sache que:
+  1. J'ai pris soin de tout archiver de manière très durable
+  2. Les 24 mots sont protégés par redondance physique (3 coffres)
+  3. Et par redondance cryptographique (Shamir Secrets)
+  4. Même si UN coffre est perdu, tu peux toujours récupérer
+
+Le système est conçu pour être robuste pendant 20+ ans
+et facile à utiliser (papier simple + script simple).
+
+Je te fais confiance pour traiter ceci avec discrétion et sécurité.
+
+═════════════════════════════════════════════════════════════════════════════════
+
+Créé: 2025-11-19
+Version: 1.0
+Archivé pour: 20+ ans
+Langage: Français (pour clarté)
+
+═════════════════════════════════════════════════════════════════════════════════

@@ -3,11 +3,21 @@
 # RECOVER SECRET - Interface simple pour récupérer un secret
 # ============================================================================
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
-
 import json
 import os
-from shamir_polynomial_robust import ShamirRobust
+
+# Force UTF-8 encoding (safe pour EXE et console)
+if sys.stdout is not None:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except (AttributeError, RuntimeError):
+        pass  # Cas EXE ou environnement spécial
+
+# Ajoute le répertoire parent au path (pour imports du package core/)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, parent_dir)
+
+from core.shamir_polynomial_robust import ShamirRobust
 
 print("\n" + "="*80)
 print("RÉCUPÉRER UN SECRET - SHAMIR ROBUST")

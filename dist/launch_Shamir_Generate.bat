@@ -1,0 +1,2 @@
+Shamir_Generate.exe
+pause

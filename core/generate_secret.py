@@ -3,13 +3,23 @@
 # GENERATE SECRET - Interface simple pour générer et diviser
 # ============================================================================
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
+import os
 
-from shamir_polynomial_robust import ShamirRobust
-from mots import MOTS  # IMPORT de la liste centralisée (SANS DUPLICATION)
+# Force UTF-8 encoding (safe pour EXE PyInstaller)
+if sys.stdout is not None:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except (AttributeError, RuntimeError):
+        pass
+
+# Ajoute le répertoire parent au path (pour imports du package core/)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, parent_dir)
+
+from core.shamir_polynomial_robust import ShamirRobust
+from core.mots import MOTS  # IMPORT de la liste centralisée (SANS DUPLICATION)
 import hashlib
 import json
-import os
 
 print("\n" + "="*80)
 print("GÉNÉRER ET DIVISER UN SECRET - SHAMIR ROBUST")
