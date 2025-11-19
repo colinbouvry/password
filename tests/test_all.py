@@ -40,10 +40,10 @@ result_integration = subprocess.run(
 )
 
 # ============================================================================
-# E2E TESTS - END-TO-END (100 iterations)
+# E2E TESTS - END-TO-END (1000 iterations)
 # ============================================================================
 print("\n" + "="*80)
-print("E2E Tests (End-to-End, 100 iterations)")
+print("E2E Tests (End-to-End, 1000 iterations)")
 print("="*80)
 
 result_e2e = subprocess.run(
@@ -68,7 +68,7 @@ e2e_status = "PASS" if e2e_pass else "FAIL"
 
 print(f"\nUnit Tests          : {unit_status}")
 print(f"Integration Tests   : {integration_status}")
-print(f"E2E Tests           : {e2e_status} (100 iterations)")
+print(f"E2E Tests           : {e2e_status} (1000 iterations)")
 
 all_pass = unit_pass and integration_pass and e2e_pass
 

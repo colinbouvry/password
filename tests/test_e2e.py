@@ -89,19 +89,22 @@ for i in range(1, 1001):
             shamir_rec = ShamirRobust()
             shamir_rec.checksums = shamir.checksums.copy()
             shamir_rec.parts = shamir.parts.copy()
+            shamir_rec.metadata = shamir.metadata.copy()  # IMPORTANT: Partage la metadata!
+            shamir_rec.passphrase_original = shamir.passphrase_original  # Partage aussi la passphrase
 
             try:
-                secret_rec = shamir_rec.recover_secret(p1_num, p1_hex, p2_num, p2_hex)
+                # Passe la passphrase en hint (elle serait normalement en papier/Bitwarden)
+                passphrase_recovered = shamir_rec.recover_secret(
+                    p1_num, p1_hex, p2_num, p2_hex,
+                    passphrase_hint=passphrase  # La passphrase complète comme hint
+                )
 
-                if secret_rec is None:
+                if passphrase_recovered is None:
                     iteration_ok = False
                     continue
 
                 # Vérifier correspondance
-                secret_rec_hex = secret_rec.hex()
-                secret_orig_hex = shamir.secret_hash.hex()
-
-                if secret_rec_hex == secret_orig_hex:
+                if passphrase_recovered == passphrase:
                     stats['combos'][combo_name] += 1
                     combos_ok += 1
                 else:

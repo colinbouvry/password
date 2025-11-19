@@ -63,10 +63,12 @@ print("="*80)
 try:
     recovered1 = shamir.recover_secret(1, parts[1]['hex'], 2, parts[2]['hex'])
 
-    assert recovered1 is not None, "Secret non récupéré"
-    assert recovered1.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
+    assert recovered1 is not None, "Passphrase non récupérée"
+    assert isinstance(recovered1, str), "Devrait être une string (passphrase)"
+    assert recovered1 == passphrase, "Passphrase ne correspond pas à l'original"
 
-    print("✅ PASS - Part 1 + Part 2 récupère le secret")
+    print(f"✅ PASS - Part 1 + Part 2 récupère la passphrase directement!")
+    print(f"   Passphrase: {recovered1[:50]}...")
     test2_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
@@ -82,10 +84,12 @@ print("="*80)
 try:
     recovered2 = shamir.recover_secret(1, parts[1]['hex'], 3, parts[3]['hex'])
 
-    assert recovered2 is not None, "Secret non récupéré"
-    assert recovered2.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
+    assert recovered2 is not None, "Passphrase non récupérée"
+    assert isinstance(recovered2, str), "Devrait être une string (passphrase)"
+    assert recovered2 == passphrase, "Passphrase ne correspond pas à l'original"
 
-    print("✅ PASS - Part 1 + Part 3 récupère le secret")
+    print(f"✅ PASS - Part 1 + Part 3 récupère la passphrase directement!")
+    print(f"   Passphrase: {recovered2[:50]}...")
     test3_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
@@ -101,10 +105,12 @@ print("="*80)
 try:
     recovered3 = shamir.recover_secret(2, parts[2]['hex'], 3, parts[3]['hex'])
 
-    assert recovered3 is not None, "Secret non récupéré"
-    assert recovered3.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
+    assert recovered3 is not None, "Passphrase non récupérée"
+    assert isinstance(recovered3, str), "Devrait être une string (passphrase)"
+    assert recovered3 == passphrase, "Passphrase ne correspond pas à l'original"
 
-    print("✅ PASS - Part 2 + Part 3 récupère le secret")
+    print(f"✅ PASS - Part 2 + Part 3 récupère la passphrase directement!")
+    print(f"   Passphrase: {recovered3[:50]}...")
     test4_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
@@ -118,11 +124,11 @@ print("TEST 5️⃣  : Vérification de cohérence (tous les secrets identiques)
 print("="*80)
 
 try:
-    assert recovered1 == recovered2, "Secret 1 ≠ Secret 2"
-    assert recovered2 == recovered3, "Secret 2 ≠ Secret 3"
-    assert recovered1.hex() == shamir.secret_hash.hex(), "Secret ≠ Hash original"
+    assert recovered1 == recovered2, "Passphrase 1 ≠ Passphrase 2"
+    assert recovered2 == recovered3, "Passphrase 2 ≠ Passphrase 3"
+    assert recovered1 == passphrase, "Passphrase ≠ Original"
 
-    print("✅ PASS - Tous les secrets récupérés sont identiques")
+    print("✅ PASS - Toutes les passphrases récupérées sont identiques à l'original!")
     test5_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")

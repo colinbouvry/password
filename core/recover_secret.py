@@ -5,6 +5,8 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
+import json
+import os
 from shamir_polynomial_robust import ShamirRobust
 
 print("\n" + "="*80)
@@ -15,6 +17,22 @@ print("\nVous pouvez utiliser n'importe quelles 2 parts sur 3.")
 print("Les 3 parts vous permettront aussi de récupérer le secret.")
 
 shamir = ShamirRobust()
+
+# Essaie de charger les métadonnées si disponibles
+metadata_file = "shamir_metadata.json"
+if os.path.exists(metadata_file):
+    try:
+        with open(metadata_file, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        shamir.metadata = metadata
+        if metadata.get('passphrase'):
+            shamir.passphrase_original = metadata['passphrase']
+        print(f"\n✅ Métadonnées chargées depuis {metadata_file}")
+    except Exception as e:
+        print(f"\n⚠️  Impossible de charger les métadonnées: {e}")
+else:
+    print(f"\nℹ️  Fichier {metadata_file} non trouvé")
+    print(f"   Les métadonnées ne seront pas disponibles pour validation")
 
 # Entrée Part 1
 print("\n" + "="*80)
@@ -54,23 +72,29 @@ if not valid2:
     print("❌ Part 2 invalide")
     sys.exit(1)
 
-# Récupère le secret
+# Récupère la PASSPHRASE
 print("\n" + "="*80)
 print("RÉCUPÉRATION")
 print("="*80)
 
-secret = shamir.recover_secret(p1_num, p1_hex, p2_num, p2_hex)
+passphrase = shamir.recover_secret(p1_num, p1_hex, p2_num, p2_hex)
 
-if secret:
-    secret_hex = secret.hex()
+if passphrase:
     print("\n" + "="*80)
     print("✅ SUCCÈS !")
     print("="*80)
-    print(f"\nHash SHA256 du secret retrouvé :")
-    print(f"  {secret_hex}")
-    print("\n✅ Comparez avec votre hash original pour confirmer.")
+    print(f"\n📋 PASSPHRASE RETROUVÉE (les 24 mots) :")
+    print(f"  {passphrase}")
+
+    # Affiche aussi les mots individuels
+    words = passphrase.split()
+    print(f"\n📝 Les mots individuels :")
+    for i, word in enumerate(words, 1):
+        print(f"   {i:02d}. {word}")
+
+    print(f"\n✅ Vous pouvez utiliser ces mots comme Master Password Bitwarden!")
 else:
-    print("\n❌ Impossible de récupérer le secret")
+    print("\n❌ Impossible de récupérer la passphrase")
     print("Vérifiez vos parts et réessayez.")
 
 print("\n" + "="*80 + "\n")

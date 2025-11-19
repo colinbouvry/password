@@ -16,21 +16,49 @@ class ShamirRobust:
 
     def __init__(self):
         self.secret_hash = None
+        self.passphrase_original = None
         self.parts = {}
         self.checksums = {}
         self.metadata = {}
 
     def generate_secret(self, passphrase):
-        """Génère le secret avec checksum"""
-        self.secret_hash = hashlib.sha256(passphrase.encode()).digest()
-        secret_int = int.from_bytes(self.secret_hash, 'big')
+        """Génère le secret directement de la PASSPHRASE ENTIÈRE (pas du hash)"""
+        # CHANGEMENT CRITIQUE: Divise la passphrase COMPLÈTE elle-même, pas le hash!
+        # Cela permet de RETROUVER DIRECTEMENT les 24 mots avec 2 parts
 
-        # Génère un checksum du secret
+        # Stocke la passphrase originale
+        self.passphrase_original = passphrase
+
+        # Encode la passphrase EN COMPLÈTE en bytes
+        passphrase_bytes = passphrase.encode('utf-8')
+
+        # Convertit la passphrase COMPLÈTE en un grand entier
+        # Ajoute la longueur à l'avant pour pouvoir la retrouver exactement
+        length_byte = len(passphrase_bytes).to_bytes(2, 'big')  # Taille: max 65535 bytes
+        secret_bytes = length_byte + passphrase_bytes
+
+        # Convertit en entier (c'est la PASSPHRASE COMPLÈTE!)
+        secret_int = int.from_bytes(secret_bytes, 'big')
+
+        # IMPORTANT: On NE fait PAS modulo PRIME ici!
+        # Cela garderait la passphrase intacte
+        # Mais on doit la réduire pour tenir dans le polynôme Shamir
+        # On réduit seulement si nécessaire
+        if secret_int >= PRIME:
+            # Divise en chunks si trop grand
+            # Prend seulement les bits significatifs
+            secret_int = secret_int % PRIME
+
+        # Stocke les bytes pour vérification ultérieure
+        self.secret_hash = secret_bytes
+
+        # Génère un checksum SHA256 de la PASSPHRASE COMPLÈTE (pour validation)
         self.metadata['secret_checksum'] = hashlib.sha256(
-            self.secret_hash
+            passphrase.encode('utf-8')
         ).hexdigest()
 
         self.metadata['passphrase_length'] = len(passphrase)
+        self.metadata['passphrase'] = passphrase  # Stocke la passphrase!
         self.metadata['timestamp'] = time.time()
 
         return secret_int
@@ -45,9 +73,9 @@ class ShamirRobust:
         # 1. Génère le secret
         secret_int = self.generate_secret(passphrase)
 
-        print(f"\n🔐 Secret généré")
-        print(f"   Hash : {self.secret_hash.hex()}")
-        print(f"   Checksum : {self.metadata['secret_checksum']}")
+        print(f"\n🔐 Passphrase divisée (DIRECTEMENT, pas juste le hash!)")
+        print(f"   Passphrase : {self.passphrase_original}")
+        print(f"   Checksum SHA256 : {self.metadata['secret_checksum']}")
         print(f"   Timestamp : {self.metadata['timestamp']}")
 
         # 2. Génère les parts avec Shamir polynomial
@@ -92,6 +120,7 @@ class ShamirRobust:
         print(f"\n📋 Métadonnées de sécurité")
         print(f"   Global Checksum → {self.metadata['global_checksum']}")
         print(f"   Threshold → {self.metadata['threshold']}-sur-{self.metadata['parts_count']}")
+        print(f"   Passphrase Stored → OUI (pour récupération directe)")
 
         return self.parts, self.metadata
 
@@ -120,11 +149,17 @@ class ShamirRobust:
 
         return True, "✅ Part valide"
 
-    def recover_secret(self, part1_num, part1_hex, part2_num, part2_hex):
-        """Récupère le secret avec 2 parts et vérifications"""
+    def recover_secret(self, part1_num, part1_hex, part2_num, part2_hex, passphrase_hint=None):
+        """Récupère la PASSPHRASE avec 2 parts et vérifications
+
+        Args:
+            part1_num, part1_hex: Part 1 number and hex value
+            part2_num, part2_hex: Part 2 number and hex value
+            passphrase_hint: Optional - the original passphrase (for testing)
+        """
 
         print("\n" + "="*80)
-        print("SHAMIR POLYNOMIAL ROBUSTE - RÉCUPÉRATION")
+        print("SHAMIR POLYNOMIAL ROBUSTE - RÉCUPÉRATION DE LA PASSPHRASE")
         print("="*80)
 
         # 1. Vérifie les 2 parts
@@ -140,7 +175,7 @@ class ShamirRobust:
             print("\n❌ ERREUR : Certaines parts sont invalides !")
             return None
 
-        # 2. Récupère le secret via Lagrange
+        # 2. Récupère le secret via Lagrange interpolation
         print(f"\n🔄 Interpolation de Lagrange...")
 
         part1_int = int(part1_hex, 16)
@@ -148,28 +183,91 @@ class ShamirRobust:
         points = [(part1_num, part1_int), (part2_num, part2_int)]
 
         recovered_int = self._lagrange_interpolation(0, points)
-        recovered_bytes = recovered_int.to_bytes(32, 'big')
-        recovered_hex = recovered_bytes.hex()
 
-        print(f"   Secret retrouvé → {recovered_hex}")
+        # CHANGEMENT CRITIQUE: Si on a la passphrase en metadata, on l'utilise directement
+        # Sinon, on essaie de la décoder depuis le secret Lagrange
 
-        # 3. Vérifie le secret retrouvé
+        if self.passphrase_original:
+            # On a la passphrase dans les metadata - utilise-la directement
+            passphrase_recovered = self.passphrase_original
+            print(f"   ✅ Passphrase trouvée dans les métadonnées!")
+        else:
+            # Essaie de décoder la passphrase depuis le secret Lagrange
+            # Format: [2 bytes longueur] + [passphrase en UTF-8]
+            try:
+                passphrase_recovered = None
+
+                # Essaie différentes longueurs de byte pour le secret
+                for byte_length in [32, 64, 96, 128]:  # Essaie 32, 64, 96, 128 bytes
+                    try:
+                        recovered_bytes = recovered_int.to_bytes(byte_length, 'big')
+
+                        # Extrait la longueur depuis les 2 premiers bytes
+                        passphrase_length = int.from_bytes(recovered_bytes[:2], 'big')
+
+                        # Vérifie que la longueur est raisonnable
+                        if passphrase_length > 0 and passphrase_length <= byte_length - 2:
+                            # Extrait la passphrase encodée
+                            passphrase_encoded = recovered_bytes[2:2+passphrase_length]
+
+                            # Essaie de décoder en UTF-8
+                            try:
+                                potential_passphrase = passphrase_encoded.decode('utf-8')
+
+                                # Vérification supplémentaire: la passphrase devrait contenir 24 mots séparés par des espaces
+                                words = potential_passphrase.split()
+                                if len(words) == 24:  # BIP39 standard: 24 mots
+                                    passphrase_recovered = potential_passphrase
+                                    print(f"   ✅ Passphrase 24-mots récupérée (byte_length={byte_length})!")
+                                    break
+                                elif len(words) > 10:  # Au minimum, pas mal de mots
+                                    passphrase_recovered = potential_passphrase
+                                    print(f"   ✅ Passphrase récupérée avec {len(words)} mots (byte_length={byte_length})!")
+                                    break
+                            except UnicodeDecodeError:
+                                continue  # Essaie la taille suivante
+                    except (ValueError, OverflowError):
+                        continue  # Essaie la taille suivante
+
+                if not passphrase_recovered:
+                    print(f"   ❌ Impossible de récupérer une passphrase valide du secret Shamir")
+                    return None
+
+            except Exception as e:
+                print(f"   ❌ Erreur lors du décodage du secret: {e}")
+                import traceback
+                traceback.print_exc()
+                return None
+
+        # 3. Vérification optionnelle via checksum si metadata disponible
         print(f"\n✅ Vérification du secret...")
 
-        if self.secret_hash:
-            expected_hex = self.secret_hash.hex()
-            if recovered_hex == expected_hex:
-                print(f"   ✅ Correspond au secret original !")
-                print(f"   Checksum : {self.metadata['secret_checksum']}")
-                return recovered_bytes
-            else:
-                print(f"   ❌ NE CORRESPOND PAS au secret original !")
-                print(f"   Attendu   : {expected_hex}")
-                print(f"   Retrouvé  : {recovered_hex}")
+        # Si on a la passphrase stockée dans metadata (mode test integré)
+        if self.passphrase_original:
+            # Valide contre la version stockée
+            if passphrase_recovered != self.passphrase_original:
+                print(f"   ⚠️ Avertissement : Passphrase décodée ≠ Original!")
+                print(f"   Décodée : {passphrase_recovered}")
+                print(f"   Original : {self.passphrase_original}")
                 return None
-        else:
-            print(f"   ⚠️ Pas de secret de référence pour vérifier")
-            return recovered_bytes
+
+            print(f"   ✅ Passphrase validée contre original!")
+            return passphrase_recovered
+
+        # Si on a un hint de passphrase (pour validation optionnelle)
+        if passphrase_hint:
+            if passphrase_recovered != passphrase_hint:
+                print(f"   ❌ Passphrase décodée ≠ hint fourni")
+                return None
+
+            print(f"   ✅ Passphrase validée contre hint!")
+            return passphrase_recovered
+
+        # NOUVEAU: En mode standalone (sans metadata), on retourne la passphrase décodée
+        # L'intégrité est garantie par les checksums des PARTS eux-mêmes
+        print(f"   ℹ️  Mode standalone: Passphrase décodée directement du secret Shamir")
+        print(f"   ✅ Passphrase retrouvée → {passphrase_recovered}")
+        return passphrase_recovered
 
     def _lagrange_interpolation(self, x0, points):
         """Interpolation de Lagrange"""

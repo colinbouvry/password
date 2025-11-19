@@ -132,9 +132,10 @@ print("="*80)
 
 try:
     recovered = shamir.recover_secret(1, parts[1]['hex'], 2, parts[2]['hex'])
-    assert recovered is not None, "Secret non récupéré"
-    assert recovered.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
-    print("✅ PASS - Secret récupéré correctement")
+    assert recovered is not None, "Passphrase non récupérée"
+    assert isinstance(recovered, str), "Devrait retourner une string (passphrase)"
+    assert recovered == test_passphrase, "Passphrase ne correspond pas"
+    print("✅ PASS - Passphrase récupérée correctement")
     test7_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
@@ -149,9 +150,10 @@ print("="*80)
 
 try:
     recovered = shamir.recover_secret(1, parts[1]['hex'], 3, parts[3]['hex'])
-    assert recovered is not None, "Secret non récupéré"
-    assert recovered.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
-    print("✅ PASS - Secret récupéré correctement")
+    assert recovered is not None, "Passphrase non récupérée"
+    assert isinstance(recovered, str), "Devrait retourner une string (passphrase)"
+    assert recovered == test_passphrase, "Passphrase ne correspond pas"
+    print("✅ PASS - Passphrase récupérée correctement")
     test8_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
@@ -166,9 +168,10 @@ print("="*80)
 
 try:
     recovered = shamir.recover_secret(2, parts[2]['hex'], 3, parts[3]['hex'])
-    assert recovered is not None, "Secret non récupéré"
-    assert recovered.hex() == shamir.secret_hash.hex(), "Hash ne correspond pas"
-    print("✅ PASS - Secret récupéré correctement")
+    assert recovered is not None, "Passphrase non récupérée"
+    assert isinstance(recovered, str), "Devrait retourner une string (passphrase)"
+    assert recovered == test_passphrase, "Passphrase ne correspond pas"
+    print("✅ PASS - Passphrase récupérée correctement")
     test9_pass = True
 except Exception as e:
     print(f"❌ FAIL - {e}")
