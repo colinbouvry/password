@@ -97,26 +97,47 @@ Notepad shamir_metadata.json → 24 mots → Bitwarden → 5 minutes
 
 ## 🎯 À FAIRE MAINTENANT
 
-### CETTE SEMAINE
+### ÉTAPE 1: GRAVURE ACIER (NOUVEAU!)
 
+Tu veux graver les données sur **acier** pour archivage **50-500 ans**?
+
+```bash
+python gravure_launcher.py
+```
+
+Cela te donne 3 options:
+1. **Gravure simple** (HEX direct) - 10-30€
+2. **Gravure manuelle** (Mots + PARTS) - 10-50€ ✅ RECOMMANDÉE
+3. **Plaque laser pro** (professionnel) - 150-300€
+
+**Voir GRAVURE_WORKFLOW.md pour instructions complètes**
+
+### ÉTAPE 2: DISTRIBUTION PHYSIQUE
+
+#### COFFRE A (Maison)
 - [ ] Imprime 24 mots (papier archival)
 - [ ] Plastifie (archival-grade)
 - [ ] Crée 2 clés USB
-- [ ] Crée 2 DVD-R
-- [ ] Imprime guides
-- [ ] Compile EXE (double-clic compile_exe.bat)
+- [ ] Guides imprimés
+- [ ] PART 1 enveloppe scellée
 
-### DISTRIBUTION
+#### COFFRE B (Banque) - PRIMAIRE
+- [ ] Papier plastifié (24 mots)
+- [ ] **Plaque acier gravée** (24 mots + PARTS)
+- [ ] Coffre-fort sécurisé
+- [ ] Clé USB backup
+- [ ] DVD-R archive
+- [ ] PART 2 enveloppe scellée
 
-- [ ] Coffre A: Papier + clé USB + PART 1 + guides
-- [ ] Coffre B: Papier + acier + clé USB + DVD + PART 2
-- [ ] Coffre C: PART 3
+#### COFFRE C (Parent/Ami)
+- [ ] PART 3 enveloppe scellée
 
-### TESTS
+### ÉTAPE 3: TESTS
 
 - [ ] shamir_metadata.json s'ouvre (Notepad)
-- [ ] Script standalone marche (python)
+- [ ] Script standalone marche: `python core/recover_secret_standalone.py`
 - [ ] EXE marche (double-clic)
+- [ ] Tester recovery avec 2 PARTS: `python core/recover_secret.py`
 
 ---
 
