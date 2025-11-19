@@ -5,7 +5,7 @@ a = Analysis(
     ['core\\recover_secret.py'],
     pathex=[],
     binaries=[],
-    datas=[('core\\mots.py', 'core'), ('core\\shamir_polynomial_robust.py', 'core')],
+    datas=[('core\\mots.py', 'core'), ('core\\shamir_polynomial_robust.py', 'core'), ('core\\convert_hex_to_24words.py', 'core')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

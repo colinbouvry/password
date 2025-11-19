@@ -50,6 +50,7 @@ pyinstaller ^
     --icon=NONE ^
     --add-data "core\mots.py:core" ^
     --add-data "core\shamir_polynomial_robust.py:core" ^
+    --add-data "core\convert_hex_to_24words.py:core" ^
     core\generate_secret.py
 
 echo.

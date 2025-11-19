@@ -44,17 +44,64 @@ else:
     print(f"\nℹ️  Fichier {metadata_file} non trouvé")
     print(f"   Les métadonnées ne seront pas disponibles pour validation")
 
+# Import pour conversion hex ↔ mots
+try:
+    from core.convert_hex_to_24words import hex_to_words_bip39, words_to_hex_bip39
+    CONVERSION_AVAILABLE = True
+except ImportError:
+    try:
+        # Fallback si import relatif échoue (par ex dans les tests)
+        from convert_hex_to_24words import hex_to_words_bip39, words_to_hex_bip39
+        CONVERSION_AVAILABLE = True
+    except ImportError:
+        CONVERSION_AVAILABLE = False
+
+def input_part(part_num):
+    """Demande une PART (hex ou 24 mots)"""
+    print(f"\nPART {part_num}:")
+    print("Choix d'entrée:")
+    print("  1. Hex (64 caractères)")
+    print("  2. 24 mots BIP39 (séparés par espaces)")
+
+    choice = input("Choix (1 ou 2): ").strip()
+
+    if choice == "2" and not CONVERSION_AVAILABLE:
+        print("⚠️  Conversion mots→hex non disponible, utilise hex")
+        choice = "1"
+
+    if choice == "2":
+        print(f"Colle les 24 mots de la part {part_num}:")
+        words = []
+        while len(words) < 24:
+            line = input(f"Mots {len(words)+1}-{min(len(words)+6, 24)}: ").strip().lower()
+            if line:
+                words.extend(line.split())
+
+        try:
+            hex_part = words_to_hex_bip39(words[:24])
+            print(f"  Converti en hex: {hex_part[:16]}...")
+            return hex_part
+        except Exception as e:
+            print(f"❌ Erreur conversion: {e}")
+            return None
+    else:
+        return input(f"Colle la part {part_num} (64 caractères hexa): ").strip()
+
+
 # Entrée Part 1
 print("\n" + "="*80)
 print("PART 1")
 print("="*80)
 
-p1_num = int(input("Numéro de la part 1 (1, 2 ou 3) : ").strip())
+p1_num = int(input("Numéro de la part 1 (1, 2 ou 3): ").strip())
 if p1_num not in [1, 2, 3]:
     print("❌ Numéro invalide")
     sys.exit(1)
 
-p1_hex = input(f"Colle la part {p1_num} (64 caractères hexa) : ").strip()
+p1_hex = input_part(p1_num)
+if not p1_hex:
+    print("❌ Erreur entrée Part 1")
+    sys.exit(1)
 
 valid1, msg1 = shamir.verify_part(p1_num, p1_hex)
 print(f"  {msg1}")
@@ -68,12 +115,15 @@ print("\n" + "="*80)
 print("PART 2")
 print("="*80)
 
-p2_num = int(input("Numéro de la part 2 (1, 2 ou 3) : ").strip())
+p2_num = int(input("Numéro de la part 2 (1, 2 ou 3): ").strip())
 if p2_num not in [1, 2, 3] or p2_num == p1_num:
     print("❌ Numéro invalide ou identique à Part 1")
     sys.exit(1)
 
-p2_hex = input(f"Colle la part {p2_num} (64 caractères hexa) : ").strip()
+p2_hex = input_part(p2_num)
+if not p2_hex:
+    print("❌ Erreur entrée Part 2")
+    sys.exit(1)
 
 valid2, msg2 = shamir.verify_part(p2_num, p2_hex)
 print(f"  {msg2}")

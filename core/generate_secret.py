@@ -21,6 +21,18 @@ from core.mots import MOTS  # IMPORT de la liste centralisée (SANS DUPLICATION)
 import hashlib
 import json
 
+# Import optionnel pour conversion hex → 24 mots
+try:
+    from core.convert_hex_to_24words import hex_to_words_bip39
+    CONVERSION_AVAILABLE = True
+except ImportError:
+    try:
+        # Fallback si import relatif échoue (par ex dans les tests)
+        from convert_hex_to_24words import hex_to_words_bip39
+        CONVERSION_AVAILABLE = True
+    except ImportError:
+        CONVERSION_AVAILABLE = False
+
 print("\n" + "="*80)
 print("GÉNÉRER ET DIVISER UN SECRET - SHAMIR ROBUST")
 print("="*80)
@@ -75,7 +87,18 @@ print("="*80)
 
 for i in [1, 2, 3]:
     print(f"\nPart {i} :")
-    print(f"  Valeur   : {parts[i]['hex']}")
+    print(f"  HEX (64 chars) :")
+    print(f"    {parts[i]['hex']}")
+
+    # Affiche aussi en 24 mots si conversion disponible
+    if CONVERSION_AVAILABLE:
+        try:
+            words = hex_to_words_bip39(parts[i]['hex'])
+            print(f"  24 MOTS BIP39:")
+            print(f"    {' '.join(words)}")
+        except Exception as e:
+            print(f"  ⚠️  Conversion mots impossible: {e}")
+
     if 'checksum' in parts[i]:
         print(f"  Checksum : {parts[i]['checksum']}")
     else:
