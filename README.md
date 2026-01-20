@@ -1,123 +1,144 @@
 # Shamir Secret Sharing 2-of-3 + BIP39
 
-Systeme cryptographique pour archiver un Master Password Bitwarden (24 mots) de maniere permanente (50-500 ans).
+![Logo](logo.jpg)
 
-## Fonctionnalites
+A cryptographic system for permanent archival of a Master Password (24 words) using Shamir Secret Sharing. Designed for 50-500 year durability.
 
-- **Shamir 2-of-3** : Divise le secret en 3 parts, 2 suffisent pour recuperer
-- **BIP39** : Conversion HEX <-> 24 mots (standard Bitcoin)
-- **Standalone** : Fonctionne sans dependances externes
-- **EXE** : Executable portable pour Windows
+## How It Works
 
-## Structure du projet
+Your secret (24-word passphrase) is split into **3 parts** using Shamir's threshold scheme. Any **2 parts** can reconstruct the original secret, but a single part reveals **nothing**.
 
 ```
-e:\dev\password\
+Secret ──► Split into 3 parts ──► Store in 3 locations
+                                      │
+Recovery: Retrieve any 2 parts ──► Reconstruct secret
+```
+
+## Features
+
+- **Shamir 2-of-3**: Mathematical guarantee - 2 parts recover, 1 part reveals nothing
+- **BIP39 Standard**: Industry-standard 24-word format (Bitcoin/Ethereum compatible)
+- **Zero Dependencies**: Pure Python, works offline, no external libraries
+- **Windows EXE**: Standalone executable for long-term compatibility
+
+## Project Structure
+
+```
+password/
 ├── core/
-│   ├── shamir_polynomial_robust.py   # Moteur Shamir 2-of-3
-│   ├── generate_secret.py            # Generation 24 mots + 3 PARTS
-│   ├── recover_secret.py             # Recuperation interactive
-│   ├── recover_secret_standalone.py  # Version standalone (zero deps)
-│   ├── convert_hex_to_24words.py     # Conversion HEX <-> 24 mots
-│   └── mots.py                       # Liste 2048 mots BIP39
+│   ├── shamir_polynomial_robust.py   # Shamir 2-of-3 engine
+│   ├── generate_secret.py            # Generate 24 words + 3 parts
+│   ├── recover_secret.py             # Interactive recovery
+│   ├── recover_secret_standalone.py  # Standalone version (no deps)
+│   ├── convert_hex_to_24words.py     # HEX <-> 24 words conversion
+│   └── mots.py                       # BIP39 wordlist (2048 words)
 │
 ├── tests/
-│   ├── test_unit.py                  # Tests unitaires
-│   ├── test_integration.py           # Tests integration
-│   └── test_hex_to_words.py          # Tests conversion (2002 tests)
+│   ├── test_unit.py                  # Unit tests
+│   ├── test_integration.py           # Integration tests
+│   └── test_hex_to_words.py          # Conversion tests (2002 tests)
 │
 ├── dist/
-│   └── Shamir_Recover.exe            # Executable Windows
+│   └── Shamir_Recover.exe            # Windows executable
 │
-├── build_exe.bat                     # Script compilation EXE
-├── gravure_launcher.py               # Menu templates gravure
-└── shamir_metadata.json              # Donnees generees (SECURISER!)
+├── build_exe.bat                     # EXE compilation script
+├── gravure_launcher.py               # Steel engraving templates
+└── shamir_metadata.json              # Generated data (KEEP SECURE!)
 ```
 
-## Usage rapide
+## Quick Start
 
-### 1. Generer un secret
+### 1. Generate a Secret
 
 ```bash
 python core/generate_secret.py
 ```
 
-Resultat :
-- 24 mots BIP39 (passphrase)
-- 3 PARTS en format HEX et 24 mots
-- Fichier `shamir_metadata.json`
+Output:
+- 24 BIP39 words (your passphrase)
+- 3 Shamir parts (HEX and 24-word format)
+- `shamir_metadata.json` file
 
-### 2. Recuperer le secret
+### 2. Recover the Secret
 
 ```bash
 python core/recover_secret.py
 ```
 
-- Entrer 2 PARTS (HEX ou 24 mots)
-- Recupere la passphrase originale
+- Enter any 2 of 3 parts (HEX or 24 words)
+- Recovers the original passphrase
 
-### 3. Lancer les tests
+### 3. Run Tests
 
 ```bash
 python tests/test_hex_to_words.py
 ```
 
-Resultat attendu : `2002/2002 tests PASSED`
+Expected: `2002/2002 tests PASSED`
 
-## Securite Shamir
+## Security Model
 
 ```
-Polynome: f(x) = secret + a*x (mod PRIME)
+Polynomial: f(x) = secret + a*x (mod PRIME)
 
 Parts:
-  Part1 = f(1)
-  Part2 = f(2)
-  Part3 = f(3)
+  Part 1 = f(1)
+  Part 2 = f(2)
+  Part 3 = f(3)
 
-Recuperation:
-  2 points -> interpolation Lagrange -> f(0) = secret
-  1 point seul = ZERO information
+Recovery:
+  2 points ──► Lagrange interpolation ──► f(0) = secret
+  1 point alone = ZERO information (mathematically proven)
 ```
 
-**Domaine** : secp256k1 (PRIME = 2^256 - 2^32 - 977)
+**Field**: secp256k1 (PRIME = 2^256 - 2^32 - 977)
 
-## Distribution recommandee
+## Recommended Storage
+
+Distribute the 3 parts across separate physical locations:
 
 ```
-COFFRE A (Maison):
-  ├── Papier plastifie (24 mots)
-  ├── Cle USB (code + EXE)
-  └── PART 1 enveloppe scellee
+SAFE A (Home):
+  ├── Laminated paper (24 words)
+  ├── USB drive (code + EXE)
+  └── Part 1 in sealed envelope
 
-COFFRE B (Banque):
-  ├── Plaque acier gravee (24 mots)
-  ├── Cle USB backup
-  └── PART 2 enveloppe scellee
+SAFE B (Bank):
+  ├── Steel plate engraving (24 words)
+  ├── Backup USB drive
+  └── Part 2 in sealed envelope
 
-COFFRE C (Parent/Ami):
-  └── PART 3 enveloppe scellee
+SAFE C (Relative/Friend):
+  └── Part 3 in sealed envelope
 ```
 
-## Gravure acier
+**Why this works:**
+- Lose 1 safe? No problem (2 remaining parts recover secret)
+- Attacker gets 1 part? Useless (reveals nothing mathematically)
+- House fire? Bank safe and relative's copy survive
+
+## Steel Engraving
+
+For multi-century durability, engrave on stainless steel:
 
 ```bash
 python gravure_launcher.py
 ```
 
-Options :
-1. **Gravure simple** (HEX direct) - 30-60 EUR
-2. **Gravure manuelle** (Mots + PARTS) - 10-50 EUR (recommandee)
-3. **Plaque laser pro** - 150-300 EUR
+Options:
+1. **Simple engraving** (HEX) - 30-60 EUR
+2. **Manual engraving** (Words + Parts) - 10-50 EUR (recommended)
+3. **Professional laser** - 150-300 EUR
 
-## Compilation EXE
+## Building Windows EXE
 
 ```bash
 build_exe.bat
 ```
 
-Voir [BUILD_EXE_GUIDE.md](BUILD_EXE_GUIDE.md) pour details.
+See [BUILD_EXE_GUIDE.md](BUILD_EXE_GUIDE.md) for details.
 
-## Tests valides
+## Test Results
 
 | Suite | Tests | Status |
 |-------|-------|--------|
@@ -125,29 +146,29 @@ Voir [BUILD_EXE_GUIDE.md](BUILD_EXE_GUIDE.md) pour details.
 | Integration | 8 | PASS |
 | HEX <-> Words | 2002 | PASS |
 
-## Workflow de recuperation
+## Recovery Scenarios
 
 ```
-CAS NORMAL:
-  Coffre A -> Lire papier -> Bitwarden -> 2 min
+NORMAL CASE:
+  Open Safe A ──► Read paper ──► Enter in Bitwarden ──► 2 min
 
-CAS CATASTROPHE:
-  PART 1 + PART 2 -> recover_secret.py -> 24 mots -> 30 min
+DISASTER CASE:
+  Part 1 + Part 2 ──► recover_secret.py ──► 24 words ──► 30 min
 
-CAS EXTREME:
-  Notepad shamir_metadata.json -> 24 mots en clair -> 5 min
+EXTREME CASE:
+  Open shamir_metadata.json in Notepad ──► 24 words in plaintext ──► 5 min
 ```
 
-## Fichiers critiques
+## Critical Files
 
-| Fichier | Importance | Duree |
-|---------|------------|-------|
-| 24 mots (papier) | CRITIQUE | 100+ ans |
-| shamir_metadata.json | CRITIQUE | 100 ans |
-| PARTS 1,2,3 | Important | infini |
-| Shamir_Recover.exe | Utile | 50 ans |
+| File | Priority | Lifespan |
+|------|----------|----------|
+| 24 words (paper) | CRITICAL | 100+ years |
+| shamir_metadata.json | CRITICAL | 100 years |
+| Parts 1, 2, 3 | Important | Indefinite |
+| Shamir_Recover.exe | Useful | 50 years |
 
-## Depannage
+## Troubleshooting
 
 **"ModuleNotFoundError"**
 ```bash
@@ -155,24 +176,24 @@ cd e:\dev\password
 python core/generate_secret.py
 ```
 
-**"Format hexa invalide"**
-- Verifier 64 caracteres hexadecimaux
-- Pas d'espaces avant/apres
+**"Invalid hex format"**
+- Verify exactly 64 hexadecimal characters
+- No spaces before/after
 
-**"Checksum ne correspond pas"**
-- La part a ete modifiee
-- Recuperer depuis la source originale
+**"Checksum mismatch"**
+- Part was corrupted or modified
+- Retrieve from original source
 
-## Specifications techniques
+## Technical Specifications
 
-- **Algorithme** : Shamir Secret Sharing (2-of-3)
-- **Entropie** : 256 bits
-- **Checksum** : SHA256 (8 bits pour BIP39)
-- **Wordlist** : 2048 mots BIP39 anglais
-- **Encodage** : UTF-8
+- **Algorithm**: Shamir Secret Sharing (2-of-3 threshold)
+- **Entropy**: 256 bits
+- **Checksum**: SHA256 (8 bits for BIP39)
+- **Wordlist**: 2048 BIP39 English words
+- **Encoding**: UTF-8
 
 ---
 
 Version: 3.0 FINAL
 Status: Production-ready
-Cree: 2025-11-19
+Created: 2025-11-19
