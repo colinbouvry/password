@@ -1,4 +1,17 @@
+# Generated secrets - NEVER commit real passphrases
+shamir_metadata.json
+**/shamir_metadata.json
 
+# Build artifacts
+build/
 __pycache__/
+*.pyc
+*.pyo
+*.spec
 
-nul
+# Output files
+output/
+
+# IDE
+.vscode/
+.idea/
