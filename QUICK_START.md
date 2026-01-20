@@ -1,115 +1,86 @@
-# Shamir Secret Sharing + BIP39 - Quick Start Guide
+# Quick Start Guide
 
-## One-Command Verification
+## Verification
 
 ```bash
 cd e:\dev\password
 python tests/test_hex_to_words.py
 ```
 
-**Expected Result**: `2002/2002 tests PASSED`
+Resultat attendu : `2002/2002 tests PASSED`
 
 ---
 
-## Generate a New Secret (3 PARTS)
+## Generer un secret (3 PARTS)
 
 ```bash
 python core/generate_secret.py
 ```
 
-**What it does**:
-1. Generates a random 24-word BIP39 passphrase
-2. Creates 3 Shamir PARTS using 2-of-3 threshold
-3. Displays each PART in both formats:
-   - **HEX**: 64 characters (technical)
-   - **24 MOTS**: Human-readable words (for gravure)
+Resultat :
+1. Genere 24 mots BIP39 aleatoires
+2. Cree 3 Shamir PARTS (seuil 2-of-3)
+3. Affiche chaque PART en deux formats :
+   - **HEX** : 64 caracteres
+   - **24 MOTS** : format lisible pour gravure
 
 ---
 
-## Recover Your Secret
+## Recuperer le secret
 
 ```bash
 python core/recover_secret.py
 ```
 
-**What it does**:
-1. Asks for any 2 of the 3 PARTS
-2. Each PART can be HEX or 24 words
-3. Recovers the original 24-word passphrase
+Resultat :
+1. Demande 2 PARTS sur 3
+2. Accepte HEX ou 24 mots pour chaque PART
+3. Recupere la passphrase originale de 24 mots
 
 ---
 
-## Key Commands
+## Commandes principales
 
-| Command | Purpose |
-|---------|---------|
-| `python tests/test_hex_to_words.py` | Run 2002 comprehensive tests |
-| `python core/generate_secret.py` | Generate 3 PARTS for your secret |
-| `python core/recover_secret.py` | Recover secret from any 2 PARTS |
+| Commande | Description |
+|----------|-------------|
+| `python tests/test_hex_to_words.py` | Lancer 2002 tests |
+| `python core/generate_secret.py` | Generer 3 PARTS |
+| `python core/recover_secret.py` | Recuperer depuis 2 PARTS |
 
 ---
 
-## System Features
+## Fonctionnalites
 
-✅ **Bidirectional HEX ↔ 24-Word Conversion**
-- Perfect roundtrip conversion
-- BIP39 standard with SHA256 checksum
-- 100% accuracy (2002 tests passed)
-
-✅ **2-of-3 Shamir Secret Sharing**
-- 3 PARTS where any 2 recover the original
-- Cryptographically secure
-- Mathematical guarantee
-
-✅ **Flexible Input/Output**
-- Display as HEX or 24 words
-- Accept either format during recovery
-- Mix formats as needed
-
-✅ **Long-Term Archival**
-- 24-word format for steel plate engraving
-- Survives 50-500 years
-- No digital dependencies
+- **Conversion bidirectionnelle HEX <-> 24 mots** : Roundtrip parfait, standard BIP39
+- **Shamir 2-of-3** : 3 PARTS, 2 suffisent pour recuperer
+- **Input flexible** : HEX ou 24 mots acceptes
+- **Archivage long terme** : Format 24 mots pour gravure acier
 
 ---
 
 ## Workflow
 
 ```
-1. Generate → Get 3 PARTS (HEX + 24 words each)
-            ↓
-2. Distribute → Part 1, 2, 3 to separate locations
-              ↓
-3. Recover → Provide any 2 PARTS → Get passphrase back
+1. Generer   ->  3 PARTS (HEX + 24 mots chacune)
+                    |
+2. Distribuer -> Part 1, 2, 3 dans 3 lieux separes
+                    |
+3. Recuperer -> 2 PARTS quelconques -> passphrase
 ```
 
 ---
 
-## Test Results
+## Exemple
 
-```
-✓ 2002/2002 tests PASSED (100%)
-  - 1 simple HEX → 24 words test
-  - 1 simple 24 words → HEX test
-  - 1000 random HEX roundtrip tests
-  - 1000 random word roundtrip tests
-  - 3 edge case tests
-```
-
----
-
-## Example
-
-**Input HEX**:
+**Input HEX** :
 ```
 380e8fb7ad86fc83f440780e31fea61104585dd2a341e46477f8bcb4bda3b4e7
 ```
 
-**Output 24 Words**:
+**Output 24 mots** :
 ```
 day inner unknown force hurt draft speed audit athlete morning praise capital
 easily confirm enhance habit tongue casual wreck just envelope spike squeeze toast
 ```
 
-**Converted Back**: Same HEX (✅ Perfect match!)
-
+**Reconversion** : HEX identique (roundtrip parfait)
